@@ -16,11 +16,12 @@ async function loadMenu() {
 }
 
 function processData(json) {
-    const menuItems = json.table.rows.map(row => ({
+    // İlk satırı atlayarak verileri işliyoruz
+    const menuItems = json.table.rows.slice(1).map(row => ({
         productName: row.c[0] ? row.c[0].v : '',
         productDescription: row.c[1] ? row.c[1].v : '',
-        productPrice: row.c[2] ? row.c[2].v.replace(/₺/g, '').trim() : '', // Remove extra ₺ symbols
-        productImage: row.c[3] ? decodeURIComponent(row.c[3].v) : '', // Decode URL
+        productPrice: row.c[2] ? row.c[2].v.replace(/₺/g, '').trim() : '', // ₺ simgelerini kaldır
+        productImage: row.c[3] ? decodeURIComponent(row.c[3].v) : '', // URL'yi çöz
         category: row.c[4] ? row.c[4].v : ''
     }));
     console.log('Processed Menu Items:', menuItems); // Debugging line
@@ -29,6 +30,8 @@ function processData(json) {
 
 function displayMenu(menuData) {
     const menuContainer = document.getElementById('menu');
+    menuContainer.innerHTML = ''; // Önceki içeriği temizle
+
     const categories = [...new Set(menuData.menu.map(item => item.category))];
 
     categories.forEach(category => {
