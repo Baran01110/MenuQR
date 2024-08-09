@@ -19,7 +19,7 @@ function processData(json) {
     const menuItems = json.table.rows.map(row => ({
         productName: row.c[0] ? row.c[0].v : '',
         productDescription: row.c[1] ? row.c[1].v : '',
-        productPrice: row.c[2] ? row.c[2].v : '',
+        productPrice: row.c[2] ? row.c[2].v.replace(/₺/g, '').trim() : '', // Remove extra ₺ symbols
         productImage: row.c[3] ? row.c[3].v : '',
         category: row.c[4] ? row.c[4].v : ''
     }));
@@ -53,21 +53,4 @@ function displayMenu(menuData) {
                         <div class="flex flex-col items-between w-full">
                             <div class="menu-content flex justify-between items-center">
                                 <a class="text-lg font-semibold">${item.productName}</a>
-                                <span class="text-gray-900 font-bold">${item.productPrice} ₺</span>
-                            </div>
-                            <div class="menu-ingredients text-xs text-gray-600 mt-2">
-                                ${item.productDescription}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                itemsGrid.appendChild(menuItem);
-            });
-
-        categorySection.appendChild(categoryTitle);
-        categorySection.appendChild(itemsGrid);
-        menuContainer.appendChild(categorySection);
-    });
-}
-
-loadMenu();
+                                <span class="text-gray-900 font-bold">${item.prod
