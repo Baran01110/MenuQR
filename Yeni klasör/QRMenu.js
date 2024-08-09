@@ -1,34 +1,33 @@
 const id = '1w6hGkATY2MqyaTFlkE7_biivvqGrlxWYr_Ap0U367Ds';
-    const gid = '0';
-    const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
+const gid = '0';
+const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
 
-    async function loadMenu() {
-        try {
-            const response = await fetch(url);
-            const data = await response.text();
-            const jsonString = data.substring(47).slice(0, -2);
-            const json = JSON.parse(jsonString);
-            const menuData = processData(json);
-            displayMenu(menuData);
-        } catch (error) {
-            console.error('Error loading menu:', error);
-        }
+async function loadMenu() {
+    try {
+        const response = await fetch(url);
+        const data = await response.text();
+        const jsonString = data.substring(47).slice(0, -2);
+        const json = JSON.parse(jsonString);
+        const menuData = processData(json);
+        displayMenu(menuData);
+    } catch (error) {
+        console.error('Error loading menu:', error);
     }
+}
 
-    function processData(json) {
+function processData(json) {
     const menuItems = json.table.rows.map(row => ({
         productName: row.c[0] ? row.c[0].v : '',
         productDescription: row.c[1] ? row.c[1].v : '',
         productPrice: row.c[2] ? row.c[2].v.replace(/₺/g, '').trim() : '', // Remove extra ₺ symbols
-        productImage: row.c[3] ? row.c[3].v : '',
+        productImage: row.c[3] ? decodeURIComponent(row.c[3].v) : '', // Decode URL
         category: row.c[4] ? row.c[4].v : ''
     }));
     console.log('Processed Menu Items:', menuItems); // Debugging line
     return { menu: menuItems };
 }
 
-
-   function displayMenu(menuData) {
+function displayMenu(menuData) {
     const menuContainer = document.getElementById('menu');
     const categories = [...new Set(menuData.menu.map(item => item.category))];
 
@@ -71,4 +70,5 @@ const id = '1w6hGkATY2MqyaTFlkE7_biivvqGrlxWYr_Ap0U367Ds';
         menuContainer.appendChild(categorySection);
     });
 }
-    loadMenu();
+
+loadMenu();
