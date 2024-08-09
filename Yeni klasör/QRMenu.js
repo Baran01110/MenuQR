@@ -1,21 +1,21 @@
 const id = '1w6hGkATY2MqyaTFlkE7_biivvqGrlxWYr_Ap0U367Ds';
-const gid = '0';
-const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
+    const gid = '0';
+    const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
 
-async function loadMenu() {
-    try {
-        const response = await fetch(url);
-        const data = await response.text();
-        const jsonString = data.substring(47).slice(0, -2);
-        const json = JSON.parse(jsonString);
-        const menuData = processData(json);
-        displayMenu(menuData);
-    } catch (error) {
-        console.error('Error loading menu:', error);
+    async function loadMenu() {
+        try {
+            const response = await fetch(url);
+            const data = await response.text();
+            const jsonString = data.substring(47).slice(0, -2);
+            const json = JSON.parse(jsonString);
+            const menuData = processData(json);
+            displayMenu(menuData);
+        } catch (error) {
+            console.error('Error loading menu:', error);
+        }
     }
-}
 
-function processData(json) {
+    function processData(json) {
     const menuItems = json.table.rows.map(row => ({
         productName: row.c[0] ? row.c[0].v : '',
         productDescription: row.c[1] ? row.c[1].v : '',
@@ -23,10 +23,12 @@ function processData(json) {
         productImage: row.c[3] ? row.c[3].v : '',
         category: row.c[4] ? row.c[4].v : ''
     }));
+    console.log('Processed Menu Items:', menuItems); // Debugging line
     return { menu: menuItems };
 }
 
-function displayMenu(menuData) {
+
+   function displayMenu(menuData) {
     const menuContainer = document.getElementById('menu');
     const categories = [...new Set(menuData.menu.map(item => item.category))];
 
@@ -53,4 +55,20 @@ function displayMenu(menuData) {
                         <div class="flex flex-col items-between w-full">
                             <div class="menu-content flex justify-between items-center">
                                 <a class="text-lg font-semibold">${item.productName}</a>
-                                <span class="text-gray-900 font-bold">${item.prod
+                                <span class="text-gray-900 font-bold">${item.productPrice} ₺</span>
+                            </div>
+                            <div class="menu-ingredients text-xs text-gray-600 mt-2">
+                                ${item.productDescription}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                itemsGrid.appendChild(menuItem);
+            });
+
+        categorySection.appendChild(categoryTitle);
+        categorySection.appendChild(itemsGrid);
+        menuContainer.appendChild(categorySection);
+    });
+}
+    loadMenu();
